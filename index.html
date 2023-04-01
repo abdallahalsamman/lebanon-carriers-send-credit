@@ -21,17 +21,18 @@
     </style>
     <form id="form" action="#">
         <div>
-            Phone number: <input onkeyup="getCarrierImg(this.value)" name="phone_number" placeholder="76572304" value="76572304" maxlength="8" required>
+            <input onkeyup="getCarrierImg(this.value)" name="phone_number" placeholder="76572304" value="76572304" maxlength="8" required>
             <img id="carrier_img" style="display: none; vertical-align: middle;" height="35px" width="35px">
         </div>
         <div>
-        Dollars:
-            <label for="credits-0.5"><input id="credits-0.5" type="radio" name="credits" value="0.5" checked required> 0.5</label>
-            <label for="credits-1.0"><input id="credits-1.0" type="radio" name="credits" value="1" required> 1.0</label>
-            <label for="credits-1.5"><input id="credits-1.5" type="radio" name="credits" value="1.5" required> 1.5</label>
-            <label for="credits-2.0"><input id="credits-2.0" type="radio" name="credits" value="2" required> 2.0</label>
-            <label for="credits-2.5"><input id="credits-2.5" type="radio" name="credits" value="2.5" required> 2.5</label>
-            <label for="credits-3.0"><input id="credits-3.0" type="radio" name="credits" value="3" required> 3.0</label>
+            <label for="credits-0.5"><input id="credits-0.5" type="radio" name="credits" value="0.5" checked required>$0.5</label>
+            <label for="credits-1.0"><input id="credits-1.0" type="radio" name="credits" value="1" required>$1.0</label>
+            <label for="credits-1.5"><input id="credits-1.5" type="radio" name="credits" value="1.5" required>$1.5</label>
+        </div>
+        <div>
+            <label for="credits-2.0"><input id="credits-2.0" type="radio" name="credits" value="2" required>$2.0</label>
+            <label for="credits-2.5"><input id="credits-2.5" type="radio" name="credits" value="2.5" required>$2.5</label>
+            <label for="credits-3.0"><input id="credits-3.0" type="radio" name="credits" value="3" required>$3.0</label>
         </div>
         <button type="submit">Send</button>
     </form>
