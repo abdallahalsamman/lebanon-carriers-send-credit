@@ -1,0 +1,104 @@
+<html>
+    <style>
+        form {
+            display: flex;
+            flex-direction: column;
+            width: 300px;
+            margin: 0 auto;
+        }
+    </style>
+    <form id="form" action="#">
+        Phone number: <input onkeyup="getCarrierImg(this.value)" name="phone_number" placeholder="81555666" maxlength="8" value="812" required>
+        Dollars:
+        <div>
+            <label for="credits-0.5"><input id="credits-0.5" type="radio" name="credits" value="0.5" checked required> 0.5</label>
+            <label for="credits-1.0"><input id="credits-1.0" type="radio" name="credits" value="1" required> 1.0</label>
+            <label for="credits-1.5"><input id="credits-1.5" type="radio" name="credits" value="1.5" required> 1.5</label>
+            <label for="credits-2.0"><input id="credits-2.0" type="radio" name="credits" value="2" required> 2.0</label>
+            <label for="credits-2.5"><input id="credits-2.5" type="radio" name="credits" value="2.5" required> 2.5</label>
+            <label for="credits-3.0"><input id="credits-3.0" type="radio" name="credits" value="3" required> 3.0</label>
+        </div>
+        <button type="submit">Send</button>
+        <img id="carrier_img" style="display: none; margin: 0 auto;" height="50px" width="50px">
+    </form>
+
+
+<script>
+    let form = document.getElementById("form")
+    let carrier_img = document.getElementById("carrier_img")
+
+    var phone_carrier_map = {
+        "030": "touch", "031": "alfa", "032": "alfa", "033": "alfa", "034": "alfa", "035": "alfa",
+        "036": "touch", "037": "touch", "038": "touch", "039": "touch", "700": "touch", "701": "alfa",
+        "702": "alfa", "703": "alfa", "704": "alfa", "705": "alfa", "706": "touch", "707": "touch",
+        "708": "touch", "709": "touch", "710": "alfa", "711": "touch", "712": "touch", "713": "touch",
+        "714": "touch", "715": "touch", "716": "alfa", "717": "alfa", "718": "alfa", "719": "alfa",
+        "760": "touch", "761": "alfa", "763": "alfa", "764": "alfa", "765": "alfa", "766": "touch",
+        "767": "touch", "768": "touch", "769": "touch", "788": "touch", "789": "touch", "791": "alfa",
+        "792": "alfa", "793": "alfa", "812": "alfa", "813": "alfa", "814": "alfa", "816": "touch", "817": "touch",
+    }
+
+    let carrier_credit_transfer_number = {
+        "alfa": "1313",
+        "touch": "1199"
+    }
+
+    function hideImg() {
+        carrier_img.style.display = "none";
+    }
+
+    function getCarrier(phone_nb) {
+        return phone_carrier_map[phone_nb.substring(0, 3)]
+    }
+
+    function getCarrierImg(phone_nb) {
+        if (phone_nb.length < 3) {
+            hideImg()
+            return
+        }
+        let carrier = getCarrier(phone_nb)
+        if (carrier)  {
+            carrier_img.style.display = "block";
+            carrier_img.src = `img/${carrier}.png`;
+        } else {
+            hideImg()
+        }
+    }
+
+    function isAndroid() {
+        return navigator.userAgent.match(/Android/i);
+    }
+
+    function isiPhone() {
+        return navigator.userAgent.match(/iPhone/i);
+    }
+
+    function make_sms_body(phone_number, credits) {
+        return `${phone_number}T${credits}`
+    }
+
+    function sms_route(phone_number, credits) {
+        let send_to = carrier_credit_transfer_number[getCarrier(phone_number)]
+        let credit_transfer_payload = make_sms_body(phone_number, credits)
+        if (isAndroid()) {
+            return `sms:${send_to}?body=${credit_transfer_payload}`
+        } else if (isiPhone()) {
+            return `sms:${send_to}&body=${credit_transfer_payload}`
+        }
+    }
+
+    function send(e) {
+        e.preventDefault();
+        let formData = new FormData(form)
+        let phone_number = formData.get("phone_number")
+        let credits = formData.get("credits")
+        let sms_url = sms_route(phone_number, credits)
+        if (sms_url) {
+            window.location.href = sms_url
+        } else {
+            alert("App not supported on this device")
+        }
+    }
+    form.addEventListener("submit", send)
+</script>
+</html>
