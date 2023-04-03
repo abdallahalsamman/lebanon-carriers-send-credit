@@ -85,7 +85,12 @@
         url.searchParams.set("phone_number", phone_number)
         url.searchParams.set("credits", credits)
         window.history.pushState({}, "", url)
-        navigator.clipboard.writeText(url)
+        if (isPC()) {
+            navigator.clipboard.writeText(url)
+            alert("Link copied to clipboard")
+        } else {
+            navigator.share({ url })
+        }
     }
 
     function hideImg() {
@@ -119,6 +124,10 @@
 
     function isiPhone() {
         return navigator.userAgent.match(/iPhone/i);
+    }
+
+    function isPC() {
+        return !isAndroid() && !isiPhone();
     }
 
     function make_sms_body(phone_number, credits) {
