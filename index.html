@@ -21,26 +21,28 @@
     </style>
     <form id="form" action="#">
         <div>
-            <input onkeyup="getCarrierImg(this.value)" name="phone_number" placeholder="76572304" value="76572304" maxlength="8" required>
+            <input id="phone_number" name="phone_number" placeholder="76572304" value="76572304" maxlength="8" required>
             <img id="carrier_img" style="display: none; vertical-align: middle;" height="35px" width="35px">
         </div>
         <div>
             <label for="credits-0.5"><input id="credits-0.5" type="radio" name="credits" value="0.5" checked required>$0.5</label>
-            <label for="credits-1.0"><input id="credits-1.0" type="radio" name="credits" value="1" required>$1.0</label>
+            <label for="credits-1"><input id="credits-1" type="radio" name="credits" value="1" required>$1.0</label>
             <label for="credits-1.5"><input id="credits-1.5" type="radio" name="credits" value="1.5" required>$1.5</label>
         </div>
         <div>
-            <label for="credits-2.0"><input id="credits-2.0" type="radio" name="credits" value="2" required>$2.0</label>
+            <label for="credits-2"><input id="credits-2" type="radio" name="credits" value="2" required>$2.0</label>
             <label for="credits-2.5"><input id="credits-2.5" type="radio" name="credits" value="2.5" required>$2.5</label>
-            <label for="credits-3.0"><input id="credits-3.0" type="radio" name="credits" value="3" required>$3.0</label>
+            <label for="credits-3"><input id="credits-3" type="radio" name="credits" value="3" required>$3.0</label>
         </div>
         <button type="submit">Send</button>
+        <button type="button" id="share">Share with sender</button>
     </form>
 
 
 <script>
     let form = document.getElementById("form")
     let carrier_img = document.getElementById("carrier_img")
+    let phone_number_input = document.getElementById("phone_number")
 
     var phone_carrier_map = {
         "030": "touch", "031": "alfa", "032": "alfa", "033": "alfa", "034": "alfa", "035": "alfa",
@@ -58,6 +60,34 @@
         "touch": "1199"
     }
 
+    function fillFormFromUrl() {
+        let url = new URL(window.location.href)
+        let phone_number = url.searchParams.get("phone_number")
+        let credits = url.searchParams.get("credits")
+        if (phone_number) {
+            phone_number_input.value = phone_number
+        }
+        if (credits) {
+            document.getElementById(`credits-${credits}`).checked = true
+        }
+    }
+    fillFormFromUrl()
+
+    document.getElementById("share").addEventListener("click", shareFormUsingUrl)
+    document.getElementById("phone_number").addEventListener("keyup", shareFormUsingUrl)
+    document.querySelectorAll('input[name="credits"]').forEach((input) => {
+        input.addEventListener("change", shareFormUsingUrl)
+    })
+    function shareFormUsingUrl() {
+        let url = new URL(window.location.href)
+        let phone_number = phone_number_input.value
+        let credits = document.querySelector('input[name="credits"]:checked').value
+        url.searchParams.set("phone_number", phone_number)
+        url.searchParams.set("credits", credits)
+        window.history.pushState({}, "", url)
+        navigator.clipboard.writeText(url)
+    }
+
     function hideImg() {
         carrier_img.style.display = "none";
     }
@@ -66,7 +96,9 @@
         return phone_carrier_map[phone_nb.substring(0, 3)]
     }
 
-    function getCarrierImg(phone_nb) {
+    document.getElementById("phone_number").addEventListener("keyup", getCarrierImg)
+    function getCarrierImg() {
+        let phone_nb = phone_number_input.value
         if (phone_nb.length < 3) {
             hideImg()
             return
@@ -79,6 +111,7 @@
             hideImg()
         }
     }
+    getCarrierImg()
 
     function isAndroid() {
         return navigator.userAgent.match(/Android/i);
